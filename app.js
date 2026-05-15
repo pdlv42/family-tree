@@ -991,8 +991,8 @@ const App = (() => {
   }
 
   function init() {
-    DataStore.load();
-    loadSampleDataIfEmpty();
+    DataStore.load(); 
+    // loadSampleDataIfEmpty();
 
     // Init tree interaction
     TreeRenderer.initDrag(document.getElementById('tree-container'));
