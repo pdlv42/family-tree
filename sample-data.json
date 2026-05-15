@@ -1,0 +1,139 @@
+{
+  "meta": { "title": "Gia đình Nguyễn" },
+  "persons": {
+    "demo_01": {
+      "id": "demo_01",
+      "name": "Nguyễn Văn Bình",
+      "gender": "male",
+      "birthYear": 1945,
+      "deathYear": 2010,
+      "photo": "https://i.pravatar.cc/150?img=51",
+      "phone": "",
+      "address": "Hà Nội",
+      "note": "Tổ phụ của gia đình",
+      "customFields": []
+    },
+    "demo_02": {
+      "id": "demo_02",
+      "name": "Lê Thị Hoa",
+      "gender": "female",
+      "birthYear": 1950,
+      "deathYear": null,
+      "photo": "https://i.pravatar.cc/150?img=47",
+      "phone": "0901 234 567",
+      "address": "Hà Nội",
+      "note": "",
+      "customFields": []
+    },
+    "demo_03": {
+      "id": "demo_03",
+      "name": "Nguyễn Văn Nam",
+      "gender": "male",
+      "birthYear": 1972,
+      "deathYear": null,
+      "photo": "https://i.pravatar.cc/150?img=52",
+      "phone": "0912 345 678",
+      "address": "TP.HCM",
+      "note": "Kỹ sư phần mềm",
+      "customFields": [
+        { "key": "Nghề nghiệp", "value": "Kỹ sư phần mềm" }
+      ]
+    },
+    "demo_04": {
+      "id": "demo_04",
+      "name": "Trần Thị Mai",
+      "gender": "female",
+      "birthYear": 1975,
+      "deathYear": null,
+      "photo": "https://i.pravatar.cc/150?img=44",
+      "phone": "0923 456 789",
+      "address": "TP.HCM",
+      "note": "",
+      "customFields": []
+    },
+    "demo_05": {
+      "id": "demo_05",
+      "name": "Nguyễn Thị Lan",
+      "gender": "female",
+      "birthYear": 1975,
+      "deathYear": null,
+      "photo": "https://i.pravatar.cc/150?img=48",
+      "phone": "0934 567 890",
+      "address": "Đà Nẵng",
+      "note": "",
+      "customFields": []
+    },
+    "demo_06": {
+      "id": "demo_06",
+      "name": "Phạm Văn Dũng",
+      "gender": "male",
+      "birthYear": 1970,
+      "deathYear": null,
+      "photo": "https://i.pravatar.cc/150?img=53",
+      "phone": "0945 678 901",
+      "address": "Đà Nẵng",
+      "note": "",
+      "customFields": []
+    },
+    "demo_07": {
+      "id": "demo_07",
+      "name": "Nguyễn Văn An",
+      "gender": "male",
+      "birthYear": 2000,
+      "deathYear": null,
+      "photo": "https://i.pravatar.cc/150?img=55",
+      "phone": "0956 789 012",
+      "address": "TP.HCM",
+      "note": "Sinh viên đại học",
+      "customFields": []
+    },
+    "demo_08": {
+      "id": "demo_08",
+      "name": "Nguyễn Thị Bích",
+      "gender": "female",
+      "birthYear": 2003,
+      "deathYear": null,
+      "photo": "https://i.pravatar.cc/150?img=45",
+      "phone": "",
+      "address": "TP.HCM",
+      "note": "Học sinh",
+      "customFields": []
+    },
+    "demo_09": {
+      "id": "demo_09",
+      "name": "Phạm Văn Minh",
+      "gender": "male",
+      "birthYear": 1998,
+      "deathYear": null,
+      "photo": "https://i.pravatar.cc/150?img=56",
+      "phone": "0967 890 123",
+      "address": "Đà Nẵng",
+      "note": "",
+      "customFields": []
+    },
+    "demo_10": {
+      "id": "demo_10",
+      "name": "Phạm Thị Linh",
+      "gender": "female",
+      "birthYear": 2005,
+      "deathYear": null,
+      "photo": "https://i.pravatar.cc/150?img=46",
+      "phone": "",
+      "address": "Đà Nẵng",
+      "note": "",
+      "customFields": []
+    }
+  },
+  "relations": [
+    { "id": "r01", "personA": "demo_01", "personB": "demo_02", "type": "spouse" },
+    { "id": "r02", "personA": "demo_01", "personB": "demo_03", "type": "parent" },
+    { "id": "r03", "personA": "demo_01", "personB": "demo_05", "type": "parent" },
+    { "id": "r04", "personA": "demo_03", "personB": "demo_04", "type": "spouse" },
+    { "id": "r05", "personA": "demo_05", "personB": "demo_06", "type": "spouse" },
+    { "id": "r06", "personA": "demo_03", "personB": "demo_07", "type": "parent" },
+    { "id": "r07", "personA": "demo_03", "personB": "demo_08", "type": "parent" },
+    { "id": "r08", "personA": "demo_05", "personB": "demo_09", "type": "parent" },
+    { "id": "r09", "personA": "demo_05", "personB": "demo_10", "type": "parent" },
+    { "id": "r10", "personA": "demo_03", "personB": "demo_05", "type": "sibling" }
+  ]
+}

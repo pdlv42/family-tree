@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cây Gia Đình – Family Tree</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- html2canvas for PNG export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ===== TOAST NOTIFICATIONS ===== -->
+<div id="toast-container"></div>
+
+<!-- ===== CONFIRM DIALOG ===== -->
+<div id="confirm-overlay" class="overlay hidden">
+  <div class="confirm-dialog">
+    <div class="confirm-icon"><i class="fas fa-triangle-exclamation"></i></div>
+    <h3 id="confirm-title">Xác nhận xóa</h3>
+    <p id="confirm-message">Bạn có chắc muốn xóa người này?</p>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" id="confirm-cancel">Hủy</button>
+      <button class="btn btn-danger" id="confirm-ok">Xóa</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PERSON MODAL ===== -->
+<div id="person-overlay" class="overlay hidden">
+  <div class="modal person-modal">
+    <div class="modal-header">
+      <h2 id="modal-title"><i class="fas fa-user-plus"></i> Thêm thành viên</h2>
+      <button class="btn-icon" id="modal-close"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <!-- Avatar preview -->
+      <div class="avatar-upload-area">
+        <div class="avatar-preview" id="avatar-preview">
+          <img id="avatar-img" src="" alt="" class="hidden" />
+          <span id="avatar-placeholder"><i class="fas fa-camera"></i></span>
+        </div>
+        <div class="avatar-inputs">
+          <label class="label">Ảnh đại diện</label>
+          <input type="url" id="field-photo" class="input" placeholder="Nhập URL ảnh..." />
+          <span class="or-divider">hoặc</span>
+          <label class="btn btn-outline btn-sm upload-btn">
+            <i class="fas fa-upload"></i> Tải ảnh lên
+            <input type="file" id="field-photo-file" accept="image/*" class="hidden" />
+          </label>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label class="label">Họ và tên <span class="required">*</span></label>
+          <input type="text" id="field-name" class="input" placeholder="Nguyễn Văn A" />
+        </div>
+        <div class="form-group">
+          <label class="label">Giới tính</label>
+          <select id="field-gender" class="input">
+            <option value="male">Nam</option>
+            <option value="female">Nữ</option>
+            <option value="other">Khác</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="label">Năm sinh</label>
+          <input type="number" id="field-birth" class="input" placeholder="1980" min="1800" max="2100" />
+        </div>
+        <div class="form-group">
+          <label class="label">Năm mất <span class="optional">(nếu có)</span></label>
+          <input type="number" id="field-death" class="input" placeholder="Để trống nếu còn sống" min="1800" max="2100" />
+        </div>
+        <div class="form-group">
+          <label class="label">Số điện thoại</label>
+          <input type="tel" id="field-phone" class="input" placeholder="0901 234 567" />
+        </div>
+        <div class="form-group full">
+          <label class="label">Địa chỉ</label>
+          <input type="text" id="field-address" class="input" placeholder="123 Đường ABC, Hà Nội" />
+        </div>
+        <div class="form-group full">
+          <label class="label">Ghi chú</label>
+          <textarea id="field-note" class="input" rows="2" placeholder="Thông tin thêm..."></textarea>
+        </div>
+      </div>
+
+      <!-- Custom fields -->
+      <div class="custom-fields-section">
+        <div class="section-title-row">
+          <span class="section-label">Trường tùy chỉnh</span>
+          <button class="btn btn-sm btn-ghost" id="add-custom-field"><i class="fas fa-plus"></i> Thêm</button>
+        </div>
+        <div id="custom-fields-list"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="person-cancel">Hủy</button>
+      <button class="btn btn-primary" id="person-save"><i class="fas fa-check"></i> Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RELATION MODAL ===== -->
+<div id="relation-overlay" class="overlay hidden">
+  <div class="modal relation-modal">
+    <div class="modal-header">
+      <h2><i class="fas fa-link"></i> Kết nối quan hệ</h2>
+      <button class="btn-icon" id="relation-close"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="label">Người A</label>
+        <select id="rel-person-a" class="input"></select>
+      </div>
+      <div class="form-group">
+        <label class="label">Quan hệ</label>
+        <select id="rel-type" class="input">
+          <option value="parent">Là cha/mẹ của</option>
+          <option value="child">Là con của</option>
+          <option value="spouse">Là vợ/chồng của</option>
+          <option value="sibling">Là anh/chị/em của</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="label">Người B</label>
+        <select id="rel-person-b" class="input"></select>
+      </div>
+      <div id="rel-preview" class="rel-preview hidden"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="relation-cancel">Hủy</button>
+      <button class="btn btn-primary" id="relation-save"><i class="fas fa-check"></i> Kết nối</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DETAIL PANEL ===== -->
+<div id="detail-panel" class="detail-panel hidden">
+  <div class="detail-header">
+    <button class="btn-icon" id="detail-close"><i class="fas fa-xmark"></i></button>
+    <div class="detail-actions">
+      <button class="btn btn-sm btn-outline" id="detail-edit"><i class="fas fa-pen"></i> Sửa</button>
+      <button class="btn btn-sm btn-danger" id="detail-delete"><i class="fas fa-trash"></i> Xóa</button>
+    </div>
+  </div>
+  <div id="detail-content"></div>
+</div>
+
+<!-- ===== TIMELINE MODAL ===== -->
+<div id="timeline-overlay" class="overlay hidden">
+  <div class="modal timeline-modal">
+    <div class="modal-header">
+      <h2><i class="fas fa-timeline"></i> Timeline gia đình</h2>
+      <button class="btn-icon" id="timeline-close"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="timeline-content"></div>
+  </div>
+</div>
+
+<!-- ===== STATS MODAL ===== -->
+<div id="stats-overlay" class="overlay hidden">
+  <div class="modal stats-modal">
+    <div class="modal-header">
+      <h2><i class="fas fa-chart-pie"></i> Thống kê gia đình</h2>
+      <button class="btn-icon" id="stats-close"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="stats-content"></div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <i class="fas fa-tree"></i>
+        <span>FamilyTree</span>
+      </div>
+      <button class="btn-icon sidebar-toggle-btn" id="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm thành viên..." />
+      <button class="btn-icon clear-search hidden" id="clear-search"><i class="fas fa-xmark"></i></button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-bar">
+      <select id="filter-gender" class="input input-sm">
+        <option value="">Tất cả giới tính</option>
+        <option value="male">Nam</option>
+        <option value="female">Nữ</option>
+        <option value="other">Khác</option>
+      </select>
+      <select id="filter-gen" class="input input-sm">
+        <option value="">Tất cả thế hệ</option>
+      </select>
+    </div>
+
+    <!-- Member list -->
+    <div class="member-list-wrap">
+      <div class="member-list-header">
+        <span id="member-count">0 thành viên</span>
+        <button class="btn btn-sm btn-primary" id="btn-add-person">
+          <i class="fas fa-plus"></i> Thêm
+        </button>
+      </div>
+      <div id="member-list" class="member-list"></div>
+    </div>
+
+    <!-- Sidebar footer actions -->
+    <div class="sidebar-footer">
+      <button class="sidebar-action" id="btn-import" title="Import JSON">
+        <i class="fas fa-file-import"></i><span>Import</span>
+      </button>
+      <button class="sidebar-action" id="btn-export" title="Export JSON">
+        <i class="fas fa-file-export"></i><span>Export</span>
+      </button>
+      <button class="sidebar-action" id="btn-timeline" title="Timeline">
+        <i class="fas fa-timeline"></i><span>Timeline</span>
+      </button>
+      <button class="sidebar-action" id="btn-stats" title="Thống kê">
+        <i class="fas fa-chart-pie"></i><span>Thống kê</span>
+      </button>
+      <button class="sidebar-action" id="btn-dark-mode" title="Dark mode">
+        <i class="fas fa-moon"></i><span>Giao diện</span>
+      </button>
+      <input type="file" id="import-file" accept=".json" class="hidden" />
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- Toolbar -->
+    <header class="toolbar">
+      <div class="toolbar-left">
+        <button class="btn-icon mobile-sidebar-btn" id="mobile-sidebar-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h1 class="page-title">Cây Gia Đình</h1>
+      </div>
+      <div class="toolbar-right">
+        <!-- Undo / Redo -->
+        <button class="btn btn-ghost btn-icon-text" id="btn-undo" title="Undo (Ctrl+Z)" disabled>
+          <i class="fas fa-rotate-left"></i>
+        </button>
+        <button class="btn btn-ghost btn-icon-text" id="btn-redo" title="Redo (Ctrl+Y)" disabled>
+          <i class="fas fa-rotate-right"></i>
+        </button>
+
+        <div class="divider-v"></div>
+
+        <!-- Layout toggle -->
+        <div class="btn-group" id="layout-group">
+          <button class="btn btn-ghost active" data-layout="vertical" title="Dọc">
+            <i class="fas fa-arrows-up-down"></i>
+          </button>
+          <button class="btn btn-ghost" data-layout="horizontal" title="Ngang">
+            <i class="fas fa-arrows-left-right"></i>
+          </button>
+        </div>
+
+        <div class="divider-v"></div>
+
+        <!-- Tree controls -->
+        <button class="btn btn-ghost" id="btn-zoom-in" title="Phóng to"><i class="fas fa-magnifying-glass-plus"></i></button>
+        <button class="btn btn-ghost" id="btn-zoom-out" title="Thu nhỏ"><i class="fas fa-magnifying-glass-minus"></i></button>
+        <button class="btn btn-ghost" id="btn-center" title="Căn giữa"><i class="fas fa-crosshairs"></i></button>
+
+        <div class="divider-v"></div>
+
+        <button class="btn btn-outline" id="btn-add-relation">
+          <i class="fas fa-link"></i> Quan hệ
+        </button>
+        <button class="btn btn-primary" id="btn-export-png">
+          <i class="fas fa-image"></i> Xuất PNG
+        </button>
+      </div>
+    </header>
+
+    <!-- Tree canvas -->
+    <div class="tree-container" id="tree-container">
+      <div class="tree-canvas" id="tree-canvas">
+        <!-- Nodes rendered here by JS -->
+        <svg id="tree-svg" class="tree-svg"></svg>
+        <div id="tree-nodes" class="tree-nodes"></div>
+      </div>
+      <!-- Empty state -->
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon"><i class="fas fa-tree"></i></div>
+        <h2>Chưa có thành viên nào</h2>
+        <p>Bắt đầu bằng cách thêm thành viên đầu tiên vào cây gia đình</p>
+        <button class="btn btn-primary" id="empty-add-btn">
+          <i class="fas fa-plus"></i> Thêm thành viên đầu tiên
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="stats-bar" id="stats-bar">
+      <div class="stat-item">
+        <i class="fas fa-users"></i>
+        <span id="stat-total">0</span> thành viên
+      </div>
+      <div class="stat-item male">
+        <i class="fas fa-mars"></i>
+        <span id="stat-male">0</span> nam
+      </div>
+      <div class="stat-item female">
+        <i class="fas fa-venus"></i>
+        <span id="stat-female">0</span> nữ
+      </div>
+      <div class="stat-item gen">
+        <i class="fas fa-layer-group"></i>
+        <span id="stat-gen">0</span> thế hệ
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
